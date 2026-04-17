@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+
+    {% for active_listing in active_listings %}
+        <a href="{% url 'listing' active_listing.id %}">
+            <div class="listing-card">
+                <div class="image-container">
+                    <img src="{{ active_listing.image_url }}" alt="{{ active_listing.description }}" width="300">
+                </div>
+                
+                <div class="content-container">
+                    <h3 class="title">{{ active_listing.title }}</h3>
+                    <p class="price"><strong>Price:</strong> ${{ active_listing.current_price }}</p>
+                    <p class="description">{{ active_listing.description }}</p>
+                    <p class="date">Created {{ active_listing.created_at }}</p>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+
+    <h2>Won Listings</h2>
+    {% for won_listing in won_listings %}
+        <a href="{% url 'listing' won_listing.id %}">
+            <div class="listing-card">
+                <div class="image-container">
+                    <img src="{{ won_listing.image_url }}" alt="{{ won_listing.description }}" width="300">
+                </div>
+                
+                <div class="content-container">
+                    <h3 class="title">{{ won_listing.title }}</h3>
+                    <p class="price"><strong>Price:</strong> ${{ won_listing.current_price }}</p>
+                    <p class="description">{{ won_listing.description }}</p>
+                    <p class="date">Created {{ won_listing.created_at }}</p>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1>Watch list</h1>
+
+    {% for watch_listing in watch %}
+        {% if watch_listing.is_active %}
+            <a href="{% url 'listing' listing.id %}">
+                <div class="listing-card">
+                    <div class="image-container">
+                        <img src="{{  watch_listing.image_url }}" alt="{{ watch_listing.description }}" width="300">
+                    </div>
+                    
+                    <div class="content-container">
+                        <h3 class="title">{{ watch_listing.title }}</h3>
+                        <p class="price"><strong>Price:</strong> ${{ watch_listing.current_price }}</p>
+                        <p class="description">{{ watch_listing.description }}</p>
+                        <p class="date">Created {{ watch_listing.created_at }}</p>
+                    </div>
+                </div>
+            </a>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

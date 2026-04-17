@@ -1,0 +1,111 @@
+{% extends "auctions/layout.html" %}
+
+{% block internal_style %}
+    .watchlist-badge {
+        background-color: #6c757d;
+        font-size: 0.7rem;
+        padding: 0.3em 0.6em;
+        border-radius: 4px;
+        color: white;
+        text-transform: uppercase;
+        border: none;
+    }
+    .listing-image {
+        max-width: 100%;
+        height: auto;
+        margin: 2rem 0;
+    }
+{% endblock %}
+
+{% block body %}
+    <div class=" mt-4">
+        <h1 class="display-6 fw-normal mb-1">Listing: {{listing.title}}</h1>
+        {% if not listing.is_active %}
+            <h2>Status: won</h2>
+        {% endif %}
+        {% if listing.is_active %}
+            {% if user.is_authenticated %}
+                <form action="{% url 'listing' listing.id %}" method="post">
+                    {% csrf_token %} 
+                    <button type="submit" class="watchlist-badge" name="watch">Watchlist</button>
+                </form>
+            {% endif %}
+        {% endif %}
+
+        {% if listing.is_active %}
+            {% if user.is_authenticated %}
+                <form action="{% url 'listing' listing.id %}" method="post">
+                    {% csrf_token %} 
+                    <button type="submit" class="watchlist-badge" name="remove_watch">delete Watchlist</button>
+                </form>
+            {% endif %}
+        {% endif %}
+
+        <div class="text-start">
+            <img src="{{listing.image_url}}" alt="{{listing.title}}" class="listing-image" width="300">
+        </div>
+
+        <div class="mb-4">
+            <p class="mb-1 text-muted">{{listing.description}}</p>
+            <h2 class="fw-bold mb-2">${{listing.current_price}}</h2>
+            <p class="small text-muted mb-2">{{ bid_count.count }} bid(s) so far. 
+                {% if bid_count.current_bidder == user.username %}
+                    Your'
+                {% else %}
+                    {{bid_count.bidder_name}} '
+                {% endif %}(s) is the current bid.</p>
+            
+            {% if error.exists %}
+                <p>{{error.message}}</p>
+            {% endif %}
+            {% if user.is_authenticated %}
+                {% if listing.is_active %}
+                <form action="{% url 'listing' listing.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control mb-3" placeholder="Bid" name="newbid">
+                    <button class="btn btn-primary px-4 py-2" type="submit" name="place_bid">Place Bid</button>
+                </form>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <div class="mt-4">
+            <h3 class="h4">Details</h3>
+            <ul class="mt-3">
+                <li>Listed by: <a href="#" class="text-decoration-none">{{listing.owner}}</a></li>
+                <li>Category: No Category Listed</li>
+            </ul>
+        </div>
+        {% if listing.is_active %}
+            {% if user.username == listing.owner %}
+                <form action="{% url 'listing' listing.id %}" method="post">
+                    {% csrf_token %} 
+                    <input type="hidden" name="close_bid" value="true">
+                    
+                        <button class="btn btn-primary px-4 py-2" type="submit">Close auction</button>
+                    
+                </form>
+            {% endif %}
+        {% endif %}
+        <br>
+        {% if listing.is_active %}
+            {% if user.is_authenticated %}
+                <form action="{% url 'listing' listing.id %}" method="post">
+                    {% csrf_token %} 
+                    <input type="text" class="form-control mb-1" name="comment_bid" placeholder="comment...">
+                    <button class="btn btn-primary px-4 py-2" type="submit">commeent</button>
+                </form>
+            {% endif %}
+        {% endif %}
+        
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <div>
+                <p style="font-size: 24px;">{{comment.user}}: {{comment.content}}</p>
+                <p>Posted at {{comment.created_at}}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
